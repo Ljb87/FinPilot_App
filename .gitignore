@@ -1,0 +1,37 @@
+# Learn more: https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# === BACKEND / PYTHON ===
+__pycache__/
+*.py[cod]
+*.pyo
+env/
+.venv/
+.env
+
+# === FRONTEND / NODE / REACT NATIVE ===
+node_modules/
+frontend/node_modules/
+frontend/.expo/
+frontend/.expo-shared/
+frontend/dist/
+frontend/web-build/
+frontend/npm-debug.log
+frontend/yarn-debug.log
+frontend/yarn-error.log
+
+# === TYPESCRIPT ===
+*.tsbuildinfo
+
+# === CERTIFICATI & CHIAVI ===
+*.pem
+*.key
+*.p12
+*.jks
+*.p8
+*.mobileprovision
+
+# === MACOS / SISTEMA ===
+.DS_Store
+
+# === VS CODE ===
+.vscode/
