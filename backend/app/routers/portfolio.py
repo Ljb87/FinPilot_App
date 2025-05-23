@@ -172,3 +172,59 @@ def get_portfolio_performance(
             })
 
     return result
+
+
+# 📈 GET: statistiche aggregate del portafoglio
+@router.get("/stats")
+def get_portfolio_stats(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    portfolio = db.query(models.Portfolio).filter(models.Portfolio.user_id == current_user.id).first()
+
+    if not portfolio:
+        raise HTTPException(status_code=404, detail="Portafoglio non trovato")
+
+    stats = {
+        "total_invested": 0.0,
+        "current_value": 0.0,
+        "total_profit_loss": 0.0,
+        "average_performance_percent": 0.0,
+        "number_of_assets": 0
+    }
+
+    assets = portfolio.assets
+    if not assets:
+        return stats  # Portafoglio vuoto
+
+    total_percent = 0.0
+
+    for asset in assets:
+        try:
+            ticker = yf.Ticker(asset.symbol)
+            current_price = ticker.info.get("regularMarketPrice")
+        except Exception:
+            current_price = None
+
+        if current_price is None:
+            continue
+
+        invested = asset.quantity * asset.purchase_price
+        current = asset.quantity * current_price
+        profit = current - invested
+        performance_percent = ((profit) / invested) * 100 if invested > 0 else 0
+
+        stats["total_invested"] += invested
+        stats["current_value"] += current
+        stats["total_profit_loss"] += profit
+        total_percent += performance_percent
+
+    stats["number_of_assets"] = len(assets)
+    stats["average_performance_percent"] = round(total_percent / stats["number_of_assets"], 2)
+
+    # Arrotondamento finale
+    stats["total_invested"] = round(stats["total_invested"], 2)
+    stats["current_value"] = round(stats["current_value"], 2)
+    stats["total_profit_loss"] = round(stats["total_profit_loss"], 2)
+
+    return stats

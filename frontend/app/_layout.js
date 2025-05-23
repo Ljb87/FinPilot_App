@@ -18,7 +18,7 @@ function ProtectedLayout() {
       }
 
       if (isAuthenticated && isAuthRoute) {
-        router.replace('/portfolio');
+        router.replace('/(drawer)/(tabs)/home');
       }
     }
   }, [segments, isAuthenticated, loading]);

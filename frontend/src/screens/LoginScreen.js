@@ -26,11 +26,17 @@ export default function LoginScreen() {
         },
       });
 
-      const { access_token } = response.data;
+      const { access_token, user } = response.data;
 
       if (access_token) {
-        await login(access_token);
-        console.log('✅ Token ricevuto e salvato:', access_token);
+        // Se l'API non restituisce `user`, usa fallback
+        const userData = user || {
+          name: 'Utente',
+          email: email,
+        };
+
+        await login(access_token, userData);
+        console.log('✅ Token e utente salvati:', access_token, userData);
       } else {
         setErrorMessage('Token non ricevuto dal server');
       }
@@ -91,4 +97,3 @@ export default function LoginScreen() {
     </View>
   );
 }
-
