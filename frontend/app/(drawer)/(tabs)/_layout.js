@@ -15,8 +15,21 @@ export default function TabLayout() {
         },
         tabBarIcon: ({ color, size }) => {
           let iconName;
-          if (route.name === 'home') iconName = 'home-outline';
-          if (route.name === 'portfolio') iconName = 'briefcase-outline';
+
+          switch (route.name) {
+            case 'home':
+              iconName = 'home-outline';
+              break;
+            case 'portfolio':
+              iconName = 'briefcase-outline';
+              break;
+            case 'consulente-ai':
+              iconName = 'bulb-outline';
+              break;
+            default:
+              iconName = 'ellipse-outline';
+          }
+
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}

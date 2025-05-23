@@ -75,5 +75,13 @@ export default StyleSheet.create({
     color: '#eee',
   },
 
+  subtitle: {
+  fontSize: 16,
+  color: '#666',
+  marginBottom: 20,
+  lineHeight: 22,
+},
+
+
 
 });

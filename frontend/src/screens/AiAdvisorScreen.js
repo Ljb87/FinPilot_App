@@ -94,22 +94,27 @@ export default function SuggestedAssetsScreen() {
   if (loading) return <ActivityIndicator size="large" color="#4CAF50" style={{ marginTop: 50 }} />;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Azioni suggerite da FinPilot</Text>
-      <FlatList
-        data={assets}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.symbol}
-        contentContainerStyle={styles.list}
-      />
+  <View style={styles.container}>
+    <Text style={styles.title}>Consulente AI</Text>
+    <Text style={styles.subtitle}>
+      💡 Basandoci sul tuo profilo, FinPilot ti suggerisce asset su cui investire grazie alla nostra AI.
+    </Text>
 
-      <QuantityModal
-        visible={!!selectedAsset}
-        assetSymbol={selectedAsset?.symbol}
-        onClose={() => setSelectedAsset(null)}
-        onConfirm={handleConfirmQuantity}
-      />
-    </View>
-  );
+    <FlatList
+      data={assets}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.symbol}
+      contentContainerStyle={styles.list}
+    />
+
+    <QuantityModal
+      visible={!!selectedAsset}
+      assetSymbol={selectedAsset?.symbol}
+      onClose={() => setSelectedAsset(null)}
+      onConfirm={handleConfirmQuantity}
+    />
+  </View>
+);
+
 }
 

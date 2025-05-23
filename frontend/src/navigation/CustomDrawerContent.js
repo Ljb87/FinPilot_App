@@ -39,6 +39,12 @@ export default function CustomDrawerContent(props) {
       />
 
       <DrawerItem
+        label="Consulente AI"
+        onPress={() => navigation.navigate('consulente-ai')}
+     />
+
+
+      <DrawerItem
         label="Impostazioni"
         onPress={() => props.navigation.navigate('settings')}
       />
