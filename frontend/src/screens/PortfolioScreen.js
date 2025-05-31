@@ -1,9 +1,12 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, FlatList, ActivityIndicator, Button, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
+import {
+  View, Text, FlatList, ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import api from '../services/api';
 import styles from '../styles/portfolioStyles';
 import { AuthContext } from '../context/AuthContext';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import EditAssetModal from '../components/EditAssetModal';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import Toast from 'react-native-toast-message';
@@ -13,13 +16,19 @@ export default function PortfolioScreen() {
   const [loading, setLoading] = useState(true);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [assetToDelete, setAssetToDelete] = useState(null);
-  const { token, logout } = useContext(AuthContext);
+  const [menuVisibleAssetId, setMenuVisibleAssetId] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
+
+
+  const { token } = useContext(AuthContext);
   const router = useRouter();
 
   const fetchPortfolio = async () => {
     try {
       const response = await api.get('/portfolio/me/performance');
+      // console.log("🎯 Dati ricevuti dal backend:", JSON.stringify(response.data, null, 2));
       setPortfolio(response.data);
+      setLastUpdated(new Date()); // ⏱️ aggiorna data
     } catch (error) {
       console.error('Errore nel caricamento del portafoglio:', error);
     } finally {
@@ -27,26 +36,33 @@ export default function PortfolioScreen() {
     }
   };
 
-  useEffect(() => {
-    fetchPortfolio();
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPortfolio();
+    }, [])
+  );
+
+   useEffect(() => {
+    const interval = setInterval(() => {
+      fetchPortfolio();
+    }, 30000); // ogni 30 secondi
+
+    return () => clearInterval(interval); // pulizia
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    router.replace('/login');
+  const handleEdit = (asset) => {
+    setSelectedAsset(asset);
+    setMenuVisibleAssetId(null);
+  };
+
+  const handleDelete = (asset) => {
+    setAssetToDelete(asset);
+    setMenuVisibleAssetId(null);
   };
 
   const handleGoToSuggestedAssets = () => {
     router.push('/suggested-assets');
-  };
-
-  const handleEdit = (asset) => {
-    setSelectedAsset(asset);
-  };
-
-  const handleDelete = (asset) => {
-    console.log("🧪 handleDelete chiamato con:", asset);
-    setAssetToDelete(asset); // Mostra la modale elegante
   };
 
   if (loading) {
@@ -57,50 +73,49 @@ export default function PortfolioScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Il mio portafoglio</Text>
 
+        {lastUpdated && (
+          <Text style={{ textAlign: 'center', marginBottom: 10, color: '#777' }}>
+            🕒 Ultimo aggiornamento: {lastUpdated.toLocaleTimeString()}
+          </Text>
+        )}
+
+
       <FlatList
         data={portfolio}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => {
-          console.log("📦 Asset renderizzato:", item);
-          return (
+          renderItem={({ item }) => (
             <View style={styles.card}>
-              <Text style={styles.symbol}>{item.symbol}</Text>
-              <Text>Quantità: {item.quantity}</Text>
-              <Text>Prezzo acquisto: {item.purchase_price}</Text>
-              <Text>Prezzo attuale: {item.current_price}</Text>
-              <Text>Profit/Loss: {item.profit_loss}</Text>
-              <Text>Performance: {item.performance_percent}%</Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.symbol}>{item.symbol}</Text>
+                  <Text>Quantità: {item.quantity}</Text>
+                  <Text>Prezzo acquisto: €{item.purchase_price}</Text>
+                  <Text>Prezzo attuale: €{item.current_price}</Text>
+                  <Text>Profit/Loss: €{item.profit_loss}</Text>
+                  <Text>Performance: {item.performance_percent}%</Text>
+                  <Text>Acquistato il: {new Date(item.purchase_date).toLocaleDateString()}</Text>
+                </View>
 
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                <TouchableOpacity
-                  style={{ backgroundColor: '#FFA000', padding: 8, borderRadius: 6 }}
-                  onPress={() => handleEdit(item)}
-                >
-                  <Text style={{ color: 'white' }}>✏️ Modifica</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{ backgroundColor: '#D32F2F', padding: 8, borderRadius: 6 }}
-                  onPress={() => handleDelete(item)}
-                >
-                  <Text style={{ color: 'white' }}>🗑️ Elimina</Text>
-                </TouchableOpacity>
+                <View style={styles.buttonColumn}>
+                  <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item)}>
+                    <Text style={styles.buttonText}>✏️ Modifica</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item)}>
+                    <Text style={styles.buttonText}>💸 Vendi</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          );
-        }}
+          )}
+
       />
 
       <TouchableOpacity
         onPress={handleGoToSuggestedAssets}
-        style={{ marginTop: 20, padding: 10, backgroundColor: '#1976D2', borderRadius: 8 }}
+        style={styles.exploreButton}
       >
-        <Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold' }}>🔍 Vai a Esplora Asset</Text>
+        <Text style={styles.exploreText}>🔍 Vai a Esplora Asset</Text>
       </TouchableOpacity>
-
-      <View style={{ marginTop: 30 }}>
-        <Button title="Logout" onPress={handleLogout} color="#D32F2F" />
-      </View>
 
       {selectedAsset && (
         <EditAssetModal
@@ -115,10 +130,12 @@ export default function PortfolioScreen() {
                 symbol: fullAsset.symbol,
                 quantity: updatedAsset.quantity,
                 purchase_price: fullAsset.purchase_price,
-                purchase_date: updatedAsset.purchase_date || new Date().toISOString(),
+                purchase_date:
+                  updatedAsset.purchase_date && !isNaN(new Date(updatedAsset.purchase_date))
+                    ? updatedAsset.purchase_date
+                    : new Date().toISOString(),
               };
 
-              console.log("📦 Payload PUT:", JSON.stringify(payload, null, 2));
 
               await api.put(`/portfolio/asset/${updatedAsset.id}`, payload);
 
@@ -149,7 +166,7 @@ export default function PortfolioScreen() {
               await api.delete(`/portfolio/asset/${assetToDelete.id}`);
               Toast.show({
                 type: 'success',
-                text1: 'Asset eliminato!',
+                text1: 'Asset venduto!',
                 text2: `${assetToDelete.symbol} è stato rimosso dal portafoglio.`,
                 position: 'bottom',
               });
@@ -160,7 +177,7 @@ export default function PortfolioScreen() {
               Toast.show({
                 type: 'error',
                 text1: 'Errore',
-                text2: 'Impossibile eliminare l’asset.',
+                text2: 'Impossibile vendere l’asset.',
                 position: 'bottom',
               });
             }
@@ -170,4 +187,3 @@ export default function PortfolioScreen() {
     </View>
   );
 }
-

@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["Portfolio"]
 )
 
-# 📥 GET: restituisce il portafoglio dell'utente loggato
+# 📥 GET: restituisce il portafoglio dell'utente loggato con current_price
 @router.get("/me", response_model=Portfolio)
 def get_my_portfolio(
     db: Session = Depends(get_db),
@@ -22,7 +22,19 @@ def get_my_portfolio(
     portfolio = db.query(models.Portfolio).filter(models.Portfolio.user_id == current_user.id).first()
     if not portfolio:
         raise HTTPException(status_code=404, detail="Portfolio non trovato")
+
+    # ➕ Aggiunge il campo current_price dinamicamente usando yfinance
+    for asset in portfolio.assets:
+        try:
+            ticker = yf.Ticker(asset.symbol)
+            data = ticker.history(period="1d")
+            asset.current_price = round(data["Close"][-1], 2) if not data.empty else 0.0
+        except Exception as e:
+            print(f"Errore su {asset.symbol}: {e}")
+            asset.current_price = 0.0
+
     return portfolio
+
 
 
 # ➕ POST: aggiungi asset (merge se già presente)
@@ -147,7 +159,7 @@ def get_portfolio_performance(
         try:
             ticker = yf.Ticker(asset.symbol)
             data = ticker.history(period="1d")
-            current_price = data["Close"][-1]
+            current_price = data["Close"].iloc[-1]
         except Exception:
             current_price = None
 
@@ -162,8 +174,10 @@ def get_portfolio_performance(
                 "current_price": round(current_price, 2),
                 "profit_loss": round(profit_loss, 2),
                 "performance_percent": round(performance_percent, 2),
-                "id": asset.id
+                "id": asset.id,
+                "purchase_date": asset.purchase_date.isoformat() if asset.purchase_date else None
             })
+
         else:
             result.append({
                 "symbol": asset.symbol,
@@ -228,3 +242,136 @@ def get_portfolio_stats(
     stats["total_profit_loss"] = round(stats["total_profit_loss"], 2)
 
     return stats
+
+
+# 📈 GET: andamento giornaliero dell'asset migliore
+@router.get("/top-asset/history")
+def get_top_asset_history(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    portfolio = db.query(models.Portfolio).filter(models.Portfolio.user_id == current_user.id).first()
+
+    if not portfolio or not portfolio.assets:
+        raise HTTPException(status_code=404, detail="Nessun asset trovato")
+
+    best_asset = None
+    best_performance = float('-inf')
+
+    for asset in portfolio.assets:
+        try:
+            ticker = yf.Ticker(asset.symbol)
+            price = ticker.info.get("regularMarketPrice")
+            if price and asset.purchase_price > 0:
+                perf = ((price - asset.purchase_price) / asset.purchase_price) * 100
+                if perf > best_performance:
+                    best_performance = perf
+                    best_asset = asset
+        except Exception:
+            continue
+
+    if not best_asset:
+        raise HTTPException(status_code=404, detail="Impossibile determinare l'asset migliore")
+
+    # Prendi gli ultimi 7 giorni di dati
+    try:
+        ticker = yf.Ticker(best_asset.symbol)
+        hist = ticker.history(period="7d")["Close"]
+        history = [
+            {"date": str(date.date()), "price": round(price, 2)}
+            for date, price in hist.items()
+        ]
+    except Exception:
+        history = []
+
+    return {
+        "symbol": best_asset.symbol,
+        "history": history
+    }
+
+
+# 📉 GET: andamento giornaliero del peggior asset
+@router.get("/worst-asset/history")
+def get_worst_asset_history(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    portfolio = db.query(models.Portfolio).filter(models.Portfolio.user_id == current_user.id).first()
+
+    if not portfolio or not portfolio.assets:
+        raise HTTPException(status_code=404, detail="Nessun asset trovato")
+
+    worst_asset = None
+    worst_performance = float('inf')
+
+    for asset in portfolio.assets:
+        try:
+            ticker = yf.Ticker(asset.symbol)
+            price = ticker.info.get("regularMarketPrice")
+            if price and asset.purchase_price > 0:
+                perf = ((price - asset.purchase_price) / asset.purchase_price) * 100
+                if perf < worst_performance:
+                    worst_performance = perf
+                    worst_asset = asset
+        except Exception:
+            continue
+
+    if not worst_asset:
+        raise HTTPException(status_code=404, detail="Impossibile determinare l'asset peggiore")
+
+    try:
+        ticker = yf.Ticker(worst_asset.symbol)
+        hist = ticker.history(period="7d")["Close"]
+        history = [
+            {"date": str(date.date()), "price": round(price, 2)}
+            for date, price in hist.items()
+        ]
+    except Exception:
+        history = []
+
+    return {
+        "symbol": worst_asset.symbol,
+        "history": history
+    }
+
+# 🚨 GET: Suggerimenti di acquisto/vendita basati sull’andamento settimanale
+@router.get("/alerts")
+def get_alerts(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    portfolio = db.query(models.Portfolio).filter(models.Portfolio.user_id == current_user.id).first()
+    if not portfolio or not portfolio.assets:
+        return []
+
+    alerts = []
+
+    for asset in portfolio.assets:
+        try:
+            ticker = yf.Ticker(asset.symbol)
+            history = ticker.history(period="7d")["Close"]
+
+            if len(history) >= 2:
+                first_price = history[0]
+                last_price = history[-1]
+                change_percent = ((last_price - first_price) / first_price) * 100
+
+                if change_percent >= 5:
+                    alerts.append({
+                        "type": "buy",
+                        "symbol": asset.symbol,
+                        "change_percent": round(change_percent, 2),
+                        "reason": f"Trend positivo negli ultimi 7 giorni (+{round(change_percent, 2)}%)"
+                    })
+                elif change_percent <= -10:
+                    alerts.append({
+                        "type": "sell",
+                        "symbol": asset.symbol,
+                        "change_percent": round(change_percent, 2),
+                        "reason": f"Andamento negativo prolungato (-{round(change_percent, 2)}%)"
+                    })
+        except Exception as e:
+            print(f"Errore su {asset.symbol}: {e}")
+
+    return alerts
+

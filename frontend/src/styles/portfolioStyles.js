@@ -23,6 +23,40 @@ const styles = StyleSheet.create({
   symbol: {
     fontWeight: 'bold',
     fontSize: 18,
+    marginBottom: 5,
+  },
+  buttonColumn: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginLeft: 10,
+  },
+  editButton: {
+    backgroundColor: '#FFA000',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+    marginBottom: 6,
+  },
+  deleteButton: {
+    backgroundColor: '#D32F2F',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  exploreButton: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: '#1976D2',
+    borderRadius: 8,
+  },
+  exploreText: {
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });
 

@@ -15,7 +15,7 @@ export default function EditAssetModal({ visible, onClose, asset, onSave }) {
     onSave({
       ...asset,
       quantity: parseFloat(quantity),
-      purchase_date: new Date().toISOString(), // aggiornamento automatico
+      purchase_date: asset.purchase_date ?? new Date().toISOString(),
     });
   };
 

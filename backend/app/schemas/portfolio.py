@@ -15,10 +15,10 @@ class AssetCreate(AssetBase):
 class Asset(AssetBase):
     id: int
     portfolio_id: int
+    current_price: float = 0.0  # ➕ Aggiunto per visualizzare il prezzo attuale
 
     class Config:
         from_attributes = True
-
 
 class PortfolioBase(BaseModel):
     name: Optional[str] = "Portafoglio principale"
