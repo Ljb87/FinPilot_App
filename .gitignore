@@ -35,3 +35,4 @@ frontend/yarn-error.log
 
 # === VS CODE ===
 .vscode/
+.DS_Store
