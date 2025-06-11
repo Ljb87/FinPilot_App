@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import api from '../services/api';
-import styles from '../styles/loginStyles';
+import styles from '../styles/registerStyles'; // ✅ usa stile separato
 import { AuthContext } from '../context/AuthContext';
 
 export default function RegisterScreen() {
@@ -51,7 +51,6 @@ export default function RegisterScreen() {
 
       await login(token);
 
-      // ⏳ Leggero delay per evitare race condition
       setTimeout(() => {
         router.replace('/welcome');
       }, 100);
@@ -66,7 +65,7 @@ export default function RegisterScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Registrati</Text>
+      <Text style={styles.title}>👤Registrati</Text>
 
       <TextInput
         style={styles.input}
@@ -106,15 +105,15 @@ export default function RegisterScreen() {
         disabled={isLoading}
       />
 
-      <Text style={{ marginTop: 20 }}>
-        Hai già un account?
+      <View style={styles.linkContainer}>
+        <Text>Hai già un account? </Text>
         <Text
-          style={{ color: 'blue', textDecorationLine: 'underline' }}
+          style={styles.linkText}
           onPress={() => router.push('/login')}
         >
-          {' '}Accedi
+          Accedi
         </Text>
-      </Text>
+      </View>
     </View>
   );
 }

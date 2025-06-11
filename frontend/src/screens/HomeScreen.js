@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { View, Text, ActivityIndicator, ScrollView, useWindowDimensions } from 'react-native'; // ✅ cambiato qui
+import { View, Text, ActivityIndicator, ScrollView, useWindowDimensions } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
@@ -14,31 +14,27 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const { token } = useContext(AuthContext);
   const navigation = useNavigation();
-
-  const { width } = useWindowDimensions(); // ✅ responsive width
+  const { width } = useWindowDimensions();
 
   const fetchPortfolio = async () => {
-  try {
-    setLoading(true);
-    const response = await api.get('/portfolio/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const assets = response.data.assets;
-    setPortfolio(assets);
+    try {
+      setLoading(true);
+      const response = await api.get('/portfolio/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const assets = response.data.assets;
+      setPortfolio(assets);
 
-    // ✅ Reset dei grafici se il portafoglio è vuoto
-    if (assets.length === 0) {
-      setTopAsset(null);
-      setWorstAsset(null);
+      if (assets.length === 0) {
+        setTopAsset(null);
+        setWorstAsset(null);
+      }
+    } catch (error) {
+      console.error('Errore nel recupero del portafoglio:', error);
+    } finally {
+      setLoading(false);
     }
-
-  } catch (error) {
-    console.error('Errore nel recupero del portafoglio:', error);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const fetchTopAssetHistory = async () => {
     try {
@@ -127,6 +123,15 @@ export default function HomeScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>📊 Dashboard Finanziaria</Text>
 
+      {/* 📭 Messaggio visibile solo se il portafoglio è vuoto */}
+      {portfolio.length === 0 && (
+        <View style={[styles.card, { backgroundColor: '#fff3cd', borderColor: '#ffeeba' }]}>
+          <Text style={{ color: '#856404', textAlign: 'center' }}>
+            📭 Il tuo portafoglio è vuoto. Vai su <Text style={{ fontWeight: 'bold' }}>Consulente-AI</Text> per acquistare il tuo primo asset!
+          </Text>
+        </View>
+      )}
+
       <View style={styles.card}>
         <Text style={styles.label}>💼 Riepilogo Investimento</Text>
         <View style={styles.infoRow}>
@@ -166,91 +171,133 @@ export default function HomeScreen() {
       </View>
 
       {chartData.length > 0 && (
-  <>
-    <Text style={styles.sectionDivider}>📈 Distribuzione per Asset</Text>
-    <View style={styles.graphContainer}>
-      <PieChart
-        data={chartData}
-        width={width - 40}
-        height={220}
-        accessor="value"
-        backgroundColor="transparent"
-        paddingLeft="15"
-        chartConfig={{
-          backgroundColor: '#fff',
-          backgroundGradientFrom: '#fff',
-          backgroundGradientTo: '#fff',
-          color: () => '#333',
-          labelColor: () => '#666',
-        }}
-        style={{ marginVertical: 8, borderRadius: 16 }}
-      />
-    </View>
-  </>
-)}
-
-
-      {(topAsset && topAsset.history.length > 0) || (worstAsset && worstAsset.history.length > 0) ? (
         <>
-          <Text style={styles.sectionDivider}>🏆 Migliore vs Peggiore (7 giorni)</Text>
-
-          {topAsset && topAsset.history.length > 0 && (
-            <>
-              <Text style={styles.label}>📈 Migliore – {topAsset.symbol}</Text>
-              <View style={styles.graphContainer}>
-                <LineChart
-                  data={{
-                    labels: topAsset.history.map(h => h.date.slice(5)),
-                    datasets: [{ data: topAsset.history.map(h => h.price) }],
-                  }}
-                  width={width - 48} // 👈 responsive
-                  height={220}
-                  yAxisLabel="€"
-                  paddingLeft="15"
-                  chartConfig={{
-                    backgroundColor: '#fff',
-                    backgroundGradientFrom: '#fff',
-                    backgroundGradientTo: '#fff',
-                    decimalPlaces: 2,
-                    color: () => '#4CAF50',
-                    labelColor: () => '#666',
-                  }}
-                  bezier
-                  style={{ marginVertical: 8, borderRadius: 16, marginRight:30 }}
-                />
-              </View>
-            </>
-          )}
-
-          {worstAsset && worstAsset.history.length > 0 && (
-            <>
-              <Text style={styles.label}>📉 Peggiore – {worstAsset.symbol}</Text>
-              <View style={styles.graphContainer}>
-                <LineChart
-                  data={{
-                    labels: worstAsset.history.map(h => h.date.slice(5)),
-                    datasets: [{ data: worstAsset.history.map(h => h.price) }],
-                  }}
-                  width={width - 48} // 👈 responsive
-                  height={220}
-                  yAxisLabel="€"
-                  paddingLeft="15"
-                  chartConfig={{
-                    backgroundColor: '#fff',
-                    backgroundGradientFrom: '#fff',
-                    backgroundGradientTo: '#fff',
-                    decimalPlaces: 2,
-                    color: () => '#f44336',
-                    labelColor: () => '#666',
-                  }}
-                  bezier
-                  style={{ marginVertical: 8, borderRadius: 16, marginRight:30 }}
-                />
-              </View>
-            </>
-          )}
+          <Text style={styles.sectionDivider}>📈 Distribuzione per Asset</Text>
+          <View style={styles.graphContainer}>
+            <PieChart
+              data={chartData}
+              width={width - 40}
+              height={220}
+              accessor="value"
+              backgroundColor="transparent"
+              paddingLeft="15"
+              chartConfig={{
+                backgroundColor: '#fff',
+                backgroundGradientFrom: '#fff',
+                backgroundGradientTo: '#fff',
+                color: () => '#333',
+                labelColor: () => '#666',
+              }}
+              style={{ marginVertical: 8, borderRadius: 16 }}
+            />
+          </View>
         </>
-      ) : null}
+      )}
+
+      {/* 🏆 Migliore vs Peggiore */}
+      {portfolio.length > 1 ? (
+        (topAsset?.history?.length > 0 || worstAsset?.history?.length > 0) && (
+          <>
+            <Text style={styles.sectionDivider}>🏆 Migliore vs Peggiore (7 giorni)</Text>
+
+            {/* ℹ️ Messaggio se topAsset e worstAsset coincidono */}
+            {topAsset?.symbol && worstAsset?.symbol && topAsset.symbol === worstAsset.symbol && (
+              <View style={[styles.card, { backgroundColor: '#e3f2fd', borderColor: '#90caf9' }]}>
+                <Text style={{ color: '#0d47a1', textAlign: 'center' }}>
+                  ℹ️ Al momento il miglior e il peggior asset coincidono ({topAsset.symbol}) perché è disponibile uno storico solo per questo asset.
+                  Aggiungi più asset o attendi qualche giorno per una panoramica più completa.
+                </Text>
+              </View>
+            )}
+
+            {topAsset?.history?.length > 0 && (
+              <>
+                <Text style={styles.label}>📈 Migliore – {topAsset.symbol}</Text>
+                <View style={styles.graphContainer}>
+                  <LineChart
+                    data={{
+                      labels: topAsset.history.map(h => h.date.slice(5)),
+                      datasets: [{ data: topAsset.history.map(h => h.price) }],
+                    }}
+                    width={width - 48}
+                    height={220}
+                    yAxisLabel="€"
+                    paddingLeft="15"
+                    chartConfig={{
+                      backgroundColor: '#fff',
+                      backgroundGradientFrom: '#fff',
+                      backgroundGradientTo: '#fff',
+                      decimalPlaces: 2,
+                      color: () => '#4CAF50',
+                      labelColor: () => '#666',
+                    }}
+                    bezier
+                    style={{ marginVertical: 8, borderRadius: 16, marginRight: 30 }}
+                  />
+                </View>
+              </>
+            )}
+
+            {worstAsset?.history?.length > 0 && (
+              <>
+                <Text style={styles.label}>📉 Peggiore – {worstAsset.symbol}</Text>
+                <View style={styles.graphContainer}>
+                  <LineChart
+                    data={{
+                      labels: worstAsset.history.map(h => h.date.slice(5)),
+                      datasets: [{ data: worstAsset.history.map(h => h.price) }],
+                    }}
+                    width={width - 48}
+                    height={220}
+                    yAxisLabel="€"
+                    paddingLeft="15"
+                    chartConfig={{
+                      backgroundColor: '#fff',
+                      backgroundGradientFrom: '#fff',
+                      backgroundGradientTo: '#fff',
+                      decimalPlaces: 2,
+                      color: () => '#f44336',
+                      labelColor: () => '#666',
+                    }}
+                    bezier
+                    style={{ marginVertical: 8, borderRadius: 16, marginRight: 30 }}
+                  />
+                </View>
+              </>
+            )}
+          </>
+        )
+      ) : (
+        topAsset?.history?.length > 0 && (
+          <>
+            <Text style={styles.sectionDivider}>📈 Andamento dell’asset</Text>
+            <Text style={styles.label}>{topAsset.symbol}</Text>
+            <View style={styles.graphContainer}>
+              <LineChart
+                data={{
+                  labels: topAsset.history.map(h => h.date.slice(5)),
+                  datasets: [{ data: topAsset.history.map(h => h.price) }],
+                }}
+                width={width - 48}
+                height={220}
+                yAxisLabel="€"
+                paddingLeft="15"
+                chartConfig={{
+                  backgroundColor: '#fff',
+                  backgroundGradientFrom: '#fff',
+                  backgroundGradientTo: '#fff',
+                  decimalPlaces: 2,
+                  color: () => '#4CAF50',
+                  labelColor: () => '#666',
+                }}
+                bezier
+                style={{ marginVertical: 8, borderRadius: 16, marginRight: 30 }}
+              />
+            </View>
+          </>
+        )
+      )}
+
     </ScrollView>
   );
 }

@@ -11,7 +11,7 @@ from pydantic import BaseModel, EmailStr
 # 🔐 Configurazione token
 SECRET_KEY = "supersegreto123"  # In produzione usa una ENV VAR!
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 10080
 
 # 📦 Router FastAPI dedicato all'autenticazione
 router = APIRouter(prefix="/auth", tags=["Auth"])

@@ -56,7 +56,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>🔐Login</Text>
 
       <TextInput
         placeholder="Email"

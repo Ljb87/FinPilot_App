@@ -1,11 +1,11 @@
 import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
+export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff', // aggiunto per coerenza
-    justifyContent: 'center',
+    backgroundColor: '#fff',
     padding: 24,
+    justifyContent: 'center',
   },
   title: {
     fontSize: 26,
@@ -25,9 +25,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     textAlign: 'center',
   },
-  registerButton: {
-    marginTop: 15,
-  },
   linkContainer: {
     marginTop: 20,
     flexDirection: 'row',
@@ -38,5 +35,3 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
-
-export default styles;

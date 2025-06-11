@@ -24,11 +24,13 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 🔐 Intercettore globale per gestire errori 401
+// 🔐 Intercettore globale per gestire errori 401 (tranne /auth/login)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401 && !isRedirecting) {
+    const isLoginRequest = error.config?.url?.includes('/auth/login');
+
+    if (error.response?.status === 401 && !isLoginRequest && !isRedirecting) {
       console.warn('🔐 Token scaduto o non valido. Logout automatico.');
       isRedirecting = true;
 
@@ -41,12 +43,10 @@ api.interceptors.response.use(
         Alert.alert("Sessione scaduta", "Per favore, accedi di nuovo.");
       }
 
-      // ✅ Evita redirect multipli
       if (router?.pathname !== '/login') {
         router.replace('/login');
       }
 
-      // 🔁 Reset del flag dopo un po', per eventuali futuri logout
       setTimeout(() => {
         isRedirecting = false;
       }, 3000);
@@ -57,4 +57,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-

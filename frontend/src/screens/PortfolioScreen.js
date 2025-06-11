@@ -20,7 +20,6 @@ const assetNames = {
   ETH: "Ethereum",
 };
 
-
 export default function PortfolioScreen() {
   const [portfolio, setPortfolio] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +34,6 @@ export default function PortfolioScreen() {
     try {
       const response = await api.get('/portfolio/me/performance');
       setPortfolio(response.data);
-      //console.log("📦 Portfolio:", JSON.stringify(response.data, null, 2)); 
       setLastUpdated(new Date());
     } catch (error) {
       console.error('Errore nel caricamento del portafoglio:', error);
@@ -65,10 +63,6 @@ export default function PortfolioScreen() {
     setAssetToDelete(asset);
   };
 
-  const handleGoToSuggestedAssets = () => {
-    router.push('/suggested-assets');
-  };
-
   if (loading) {
     return <ActivityIndicator size="large" style={styles.loading} />;
   }
@@ -83,82 +77,84 @@ export default function PortfolioScreen() {
         </Text>
       )}
 
-      <FlatList
-        data={portfolio}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.symbol}>
-              <Text style={{ fontWeight: 'bold' }}>{item.symbol}</Text>
-              <Text style={{ fontWeight: '400' }}> – {assetNames[item.symbol]}</Text>
-            </Text>
+      {portfolio.length === 0 ? (
+        <Text style={styles.infoMessage}>
+          🚨 Il tuo portafoglio è vuoto! Vai su <Text style={{ fontWeight: 'bold' }}>Consulente-AI</Text> e acquista i tuoi primi asset!
+        </Text>
+      ) : (
+        <>
+          <FlatList
+            data={portfolio}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <Text style={styles.symbol}>
+                  <Text style={{ fontWeight: 'bold' }}>{item.symbol}</Text>
+                  <Text style={{ fontWeight: '400' }}> – {assetNames[item.symbol]}</Text>
+                </Text>
 
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoTextLabel}>Quantità</Text>
+                  <Text style={styles.infoTextValue}>{item.quantity}</Text>
+                </View>
 
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoTextLabel}>Prezzo acquisto</Text>
+                  <Text style={styles.infoTextValue}>€ {item.purchase_price.toFixed(2)}</Text>
+                </View>
 
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoTextLabel}>Prezzo attuale</Text>
+                  <Text style={styles.infoTextValue}>€ {item.current_price.toFixed(2)}</Text>
+                </View>
 
-            <View style={styles.infoRow}>
-              <Text style={styles.infoTextLabel}>Quantità</Text>
-              <Text style={styles.infoTextValue}>{item.quantity}</Text>
-            </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoTextLabel}>Profit/Loss</Text>
+                  <Text style={[
+                    styles.infoTextValue,
+                    { color: item.profit_loss >= 0 ? '#4CAF50' : '#f44336' },
+                  ]}>
+                    € {item.profit_loss.toFixed(2)}
+                  </Text>
+                </View>
 
-            <View style={styles.infoRow}>
-              <Text style={styles.infoTextLabel}>Prezzo acquisto</Text>
-              <Text style={styles.infoTextValue}>€ {item.purchase_price.toFixed(2)}</Text>
-            </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoTextLabel}>Performance</Text>
+                  <Text style={[
+                    styles.infoTextValue,
+                    { color: item.performance_percent >= 0 ? '#4CAF50' : '#f44336' },
+                  ]}>
+                    {item.performance_percent.toFixed(2)}%
+                  </Text>
+                </View>
 
-            <View style={styles.infoRow}>
-              <Text style={styles.infoTextLabel}>Prezzo attuale</Text>
-              <Text style={styles.infoTextValue}>€ {item.current_price.toFixed(2)}</Text>
-            </View>
+                <View style={[styles.infoRow, { borderBottomWidth: 0 }]}>
+                  <Text style={styles.infoTextLabel}>Acquistato il</Text>
+                  <Text style={styles.infoTextValue}>
+                    {new Date(item.purchase_date).toLocaleDateString()}
+                  </Text>
+                </View>
 
-            <View style={styles.infoRow}>
-              <Text style={styles.infoTextLabel}>Profit/Loss</Text>
-              <Text style={[
-                styles.infoTextValue,
-                { color: item.profit_loss >= 0 ? '#4CAF50' : '#f44336' },
-              ]}>
-                € {item.profit_loss.toFixed(2)}
-              </Text>
-            </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12 }}>
+                  <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item)}>
+                    <Text style={styles.buttonText}>✏️ Modifica</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.deleteButton, { marginLeft: 8 }]}
+                    onPress={() => handleDelete(item)}
+                  >
+                    <Text style={styles.buttonText}>💸 Vendi</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          />
 
-            <View style={styles.infoRow}>
-              <Text style={styles.infoTextLabel}>Performance</Text>
-              <Text style={[
-                styles.infoTextValue,
-                { color: item.performance_percent >= 0 ? '#4CAF50' : '#f44336' },
-              ]}>
-                {item.performance_percent.toFixed(2)}%
-              </Text>
-            </View>
-
-            <View style={[styles.infoRow, { borderBottomWidth: 0 }]}>
-              <Text style={styles.infoTextLabel}>Acquistato il</Text>
-              <Text style={styles.infoTextValue}>
-                {new Date(item.purchase_date).toLocaleDateString()}
-              </Text>
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12 }}>
-              <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item)}>
-                <Text style={styles.buttonText}>✏️ Modifica</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.deleteButton, { marginLeft: 8 }]}
-                onPress={() => handleDelete(item)}
-              >
-                <Text style={styles.buttonText}>💸 Vendi</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      />
-
-      <TouchableOpacity
-        onPress={handleGoToSuggestedAssets}
-        style={styles.exploreButton}
-      >
-        <Text style={styles.exploreText}>🔍 Vai a Consulente-AI</Text>
-      </TouchableOpacity>
+          <Text style={styles.infoMessage}>
+            ℹ️ Vuoi aggiungere altri asset? Vai su <Text style={{ fontWeight: 'bold' }}>Consulente-AI</Text> oppure modifica o vendi quelli esistenti!
+          </Text>
+        </>
+      )}
 
       {selectedAsset && (
         <EditAssetModal
@@ -209,8 +205,6 @@ export default function PortfolioScreen() {
                 position: 'bottom',
               });
               setAssetToDelete(null);
-              
-              // Naviga verso Home per ricaricare i grafici aggiornati
               router.replace('/home');
             } catch (error) {
               console.error("❌ Errore durante l'eliminazione:", error);
@@ -222,7 +216,6 @@ export default function PortfolioScreen() {
               });
             }
           }}
-
         />
       )}
     </View>

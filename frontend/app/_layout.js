@@ -1,7 +1,7 @@
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { AuthProvider, AuthContext } from '../src/context/AuthContext';
 import { useContext, useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, Text } from 'react-native'; // 👈 aggiunto Text
 import Toast from 'react-native-toast-message';
 
 function ProtectedLayout() {
@@ -24,10 +24,11 @@ function ProtectedLayout() {
   }, [segments, isAuthenticated, loading]);
 
   if (loading) {
-    // Spinner mentre carica lo stato di autenticazione
+    // ✅ Spinner + testo per evitare warning
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#4CAF50" />
+        <Text style={{ marginTop: 12 }}>Caricamento...</Text>
       </View>
     );
   }
@@ -35,7 +36,7 @@ function ProtectedLayout() {
   return (
     <>
       <Slot />
-      <Toast /> {/* ✅ Toast incluso nel layout */}
+      <Toast />
     </>
   );
 }

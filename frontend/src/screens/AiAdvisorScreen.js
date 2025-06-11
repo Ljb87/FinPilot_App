@@ -66,7 +66,7 @@ export default function AiAdvisorScreen() {
       };
 
       await api.post('/portfolio/asset', body);
-      await fetchUserPortfolioSymbols(); // 🔄 aggiorna i simboli per disabilitare il pulsante
+      await fetchUserPortfolioSymbols();
 
       setSelectedAsset(null);
       Alert.alert("✅ Aggiunto", `${selectedAsset.symbol} è stato aggiunto al tuo portafoglio.`);
@@ -97,7 +97,7 @@ export default function AiAdvisorScreen() {
       }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
           <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
-            {item.symbol} – {item.name}
+            {`${item.symbol} – ${item.name}`}
           </Text>
           {item.recommended && (
             <View style={styles.aiBadge}>

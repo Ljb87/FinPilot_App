@@ -1,11 +1,14 @@
-
 import * as SecureStore from 'expo-secure-store';
 
-const isWeb = typeof window !== 'undefined';
+const isWeb = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 
 export async function saveToken(key, value) {
   if (isWeb) {
-    localStorage.setItem(key, value);
+    try {
+      window.localStorage.setItem(key, value);
+    } catch (e) {
+      console.warn('⚠️ localStorage non disponibile', e);
+    }
   } else {
     await SecureStore.setItemAsync(key, value);
   }
@@ -13,7 +16,12 @@ export async function saveToken(key, value) {
 
 export async function getToken(key) {
   if (isWeb) {
-    return localStorage.getItem(key);
+    try {
+      return window.localStorage.getItem(key);
+    } catch (e) {
+      console.warn('⚠️ localStorage non disponibile', e);
+      return null;
+    }
   } else {
     return await SecureStore.getItemAsync(key);
   }
@@ -21,7 +29,11 @@ export async function getToken(key) {
 
 export async function deleteToken(key) {
   if (isWeb) {
-    localStorage.removeItem(key);
+    try {
+      window.localStorage.removeItem(key);
+    } catch (e) {
+      console.warn('⚠️ localStorage non disponibile', e);
+    }
   } else {
     await SecureStore.deleteItemAsync(key);
   }
