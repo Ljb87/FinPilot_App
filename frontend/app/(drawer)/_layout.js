@@ -9,7 +9,7 @@ export default function DrawerLayout() {
         headerShown: true,
         headerTitle: '',
         headerStyle: {
-          backgroundColor: '#1976D2',
+          backgroundColor: '#64B5F6',
         },
         headerTintColor: '#fff',
         drawerActiveTintColor: '#4CAF50',

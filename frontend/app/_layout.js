@@ -2,7 +2,7 @@ import { Slot, useRouter, useSegments } from 'expo-router';
 import { AuthProvider, AuthContext } from '../src/context/AuthContext';
 import { useContext, useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import Toast from 'react-native-toast-message'; // ✅ Import aggiunto
+import Toast from 'react-native-toast-message';
 
 function ProtectedLayout() {
   const { isAuthenticated, loading } = useContext(AuthContext);

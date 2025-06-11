@@ -60,7 +60,7 @@ export default function CustomDrawerContent(props) {
 const styles = StyleSheet.create({
   header: {
     padding: 20,
-    backgroundColor: '#1976D2',
+    backgroundColor: '#64B5F6',
     alignItems: 'center',
   },
   avatar: {

@@ -6,24 +6,33 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null); // ✅ aggiunto utente
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const loadData = async () => {
-      const savedToken = await AsyncStorage.getItem('token');
-      const savedUser = await AsyncStorage.getItem('user');
-      if (savedToken) setToken(savedToken);
-      if (savedUser) setUser(JSON.parse(savedUser)); // ✅ parse JSON
-      setLoading(false);
+      try {
+        const savedToken = await AsyncStorage.getItem('token');
+        const savedUser = await AsyncStorage.getItem('user');
+
+        if (savedToken) setToken(savedToken);
+        if (savedUser && savedUser !== 'undefined') {
+          setUser(JSON.parse(savedUser));
+        }
+
+      } catch (error) {
+        console.error("Errore durante il caricamento dei dati da AsyncStorage:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     loadData();
   }, []);
 
   const login = async (newToken, userData) => {
     await AsyncStorage.setItem('token', newToken);
-    await AsyncStorage.setItem('user', JSON.stringify(userData)); // ✅ salva user
+    await AsyncStorage.setItem('user', JSON.stringify(userData));
     setToken(newToken);
     setUser(userData);
   };
@@ -46,4 +55,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
