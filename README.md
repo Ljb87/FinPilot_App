@@ -74,7 +74,7 @@ Puoi trovare il tuo IP locale con ipconfig o ifconfig.
 
 npx expo start
 Scansiona il QR code con l’app Expo Go sul telefono
-oppure premi i (iOS) o a (Android) per emulatori.
+oppure premi i (iOS) o a (Android) per emulatori oppure w per web
 
 
 
