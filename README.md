@@ -1,91 +1,136 @@
-## FinPilot – Simulatore di Investimenti Finanziari con AI
+# FinPilot – Simulatore di Investimenti Finanziari con AI
 
-FinPilot è un’applicazione mobile sviluppata come progetto di tesi per simulare investimenti finanziari. L’utente può creare un portafoglio, acquistare asset in modalità simulata, ricevere suggerimenti da un Consulente AI e monitorare l’andamento nel tempo. Tutti i dati sono aggiornati in tempo reale tramite l’API yFinance, rendendo l’esperienza vicina alla realtà.
+FinPilot è un'app mobile sviluppata come progetto di tesi per simulare investimenti finanziari. L’utente può creare un portafoglio, acquistare asset in modalità simulata, ricevere suggerimenti da un Consulente AI e monitorare l’andamento nel tempo.  
+Grazie all’integrazione con l’API `yFinance`, i dati sono aggiornati in tempo reale, offrendo un’esperienza fedele ai mercati reali.
 
 ## Tecnologie utilizzate
 
-- **Frontend:** React Native (con Expo)
-- **Backend:** FastAPI (Python)
-- **Database:** PostgreSQL
-- **Librerie:** Axios, AsyncStorage, react-native-chart-kit, yfinance
-- **Hosting sviluppo:** ambiente locale
+| Layer     | Tecnologie |
+|-----------|------------|
+| Frontend  | React Native (Expo) |
+| Backend   | FastAPI (Python) |
+| Database  | PostgreSQL |
+| Librerie  | Axios, AsyncStorage, yfinance, react-native-chart-kit |
+| Hosting   | Ambiente locale (Expo Go / Web + Uvicorn) |
 
 ## Funzionalità principali
 
 - Registrazione e login utente
-- Dashboard personalizzata con grafici
-- Simulazione d'acquisto di asset finanziari
-- Suggerimenti AI basati su analisi reali via yFinance
-- Calcolo automatico della performance e del saldo
-- Schermata di benvenuto e guida al primo utilizzo
+- Schermata di benvenuto con guida iniziale
+- Consulente AI con suggerimenti in tempo reale
+- Simulazione d’acquisto di asset
+- Dashboard con grafici, performance e saldo
+- Modifica/Vendita asset
 
-## Installazione e test locale
+## Installazione e avvio locale
 
-Per testare l’app sul proprio dispositivo o emulatore:
+### 1. Clona il progetto
 
-## 1. Clona il progetto
-
+```bash
 git clone https://github.com/Ljb87/FinPilot_App.git
 cd FinPilot_App
+```
 
+### 2. Backend – FastAPI
 
-## 2. Backend – FastAPI
-
-
+```bash
 cd backend
 python -m venv venv
-source venv/bin/activate        # Su Windows: venv\Scripts\activate
+source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+```
 
-## Configura il file .env:
+#### Crea file `.env`
 
-Crea un file chiamato .env nella cartella backend con il seguente contenuto:
+Nel file `backend/.env` inserire:
 
-DATABASE_URL=postgresql://postgres:password@localhost:5432/finpilot_db
-Sostituisci password con la password effettiva del tuo utente PostgreSQL.
+```
+DATABASE_URL=postgresql://postgres:<password>@localhost:5432/finpilot_db
+```
 
-## Come creare il database PostgreSQL
+Sostituire `<password>` con la password dell’utente PostgreSQL.
 
-Se PostgreSQL è già installato, puoi creare il database in questo modo:
+#### Crea il database
 
+```sql
 psql -U postgres
 CREATE DATABASE finpilot_db;
+```
 
-Nota: non è necessario creare manualmente le tabelle.
-Il backend genera automaticamente la struttura del database al primo avvio, grazie a SQLAlchemy.
+Le tabelle vengono create automaticamente al primo avvio grazie a SQLAlchemy.
 
-## Avvia il backend:
+#### Avvio del backend su rete locale (necessario per Expo Go)
 
-uvicorn app.main:app --reload
-Accedi alla documentazione interattiva:
-http://localhost:8000/docs
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
 
+Documentazione API interattiva: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-## 3. Frontend – Expo (React Native)
+### 3. Frontend – Expo (React Native)
+
+```bash
 cd ../frontend
 npm install
+```
 
-## Aggiorna l’endpoint in services/api.js:
+#### Modifica `services/api.js`
 
-const API_URL = 'http://<IP_LOCALE_DEL_PC>:8000';
-Puoi trovare il tuo IP locale con ipconfig o ifconfig.
+Aggiornare `API_URL` con l’**IP locale del proprio computer** (es. `192.168.1.64`):
 
-## Avvia Expo:
+```js
+const API_URL = 'http://192.168.1.64:8000';
+```
 
+È possibile trovare l’IP locale tramite `ipconfig` (Windows) o `ifconfig` (Mac/Linux).
+
+### 4. Avvio Expo
+
+```bash
 npx expo start
-Scansiona il QR code con l’app Expo Go sul telefono
-oppure premi i (iOS) o a (Android) per emulatori oppure w per web
+```
 
+- Scansionare il QR code con l’app Expo Go per test su smartphone
+- Premere:
+  - `i` per simulatore iOS
+  - `a` per simulatore Android
+  - `w` per testare da browser
 
+## Testing
 
-## Test funzionale
+1. Avviare il backend con:
 
-Tutte le funzionalità sono testabili localmente.
-Puoi verificare:
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
 
-Registrazione/Login
-Onboarding iniziale
-Simulazione acquisto
-Suggerimenti AI
-Dashboard con statistiche
-Performance e saldo aggiornato
+2. Avviare il frontend con:
+
+```bash
+cd frontend
+npx expo start
+```
+
+3. Collegarsi da:
+
+- Browser (modalità Web)
+- Smartphone tramite Expo Go
+
+4. Testare le funzionalità principali:
+   - Registrazione
+   - Schermata Welcome
+   - Simulazione acquisto
+   - Suggerimenti AI
+   - Modifica e vendita asset
+   - Dashboard con statistiche
+
+## Stato
+
+Versione stabile testata su:
+- iPhone (Expo Go)
+- Browser (Web)
+- Backend FastAPI su host 0.0.0.0
+
+## Licenza
+
+Uso didattico – progetto di tesi
