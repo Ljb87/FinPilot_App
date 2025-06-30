@@ -56,7 +56,6 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     }
 
 
-
 # 🔐 Recupera l'utente loggato dal token
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme),
@@ -82,7 +81,7 @@ def get_current_user(
     return user
 
 
-# 🆕 Registrazione utente
+# 🆕 Endpoint per registrazione
 class UserCreate(BaseModel):
     email: EmailStr
     name: str
@@ -119,4 +118,13 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     return {
         "message": "Utente registrato con successo",
         "user_id": new_user.id
+    }
+
+
+# ✅ Nuovo endpoint per ottenere il profilo dell'utente autenticato
+@router.get("/me")
+def get_my_profile(current_user: models.User = Depends(get_current_user)):
+    return {
+        "name": current_user.name,
+        "email": current_user.email
     }

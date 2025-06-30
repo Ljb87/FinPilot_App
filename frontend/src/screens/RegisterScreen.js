@@ -46,10 +46,17 @@ export default function RegisterScreen() {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
 
-      const token = loginResponse.data.access_token;
+     const token = loginResponse.data.access_token;
       console.log("🔐 Token ricevuto:", token);
 
-      await login(token);
+      // Recupera il profilo utente per ottenere userData
+      const meResponse = await api.get('/portfolio/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const userData = meResponse.data;
+
+      await login(token, userData); 
+
 
       setTimeout(() => {
         router.replace('/welcome');

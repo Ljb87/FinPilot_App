@@ -3,14 +3,20 @@ import * as SecureStore from 'expo-secure-store';
 const isWeb = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 
 export async function saveToken(key, value) {
+  const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+
   if (isWeb) {
     try {
-      window.localStorage.setItem(key, value);
+      window.localStorage.setItem(key, stringValue);
     } catch (e) {
       console.warn('⚠️ localStorage non disponibile', e);
     }
   } else {
-    await SecureStore.setItemAsync(key, value);
+    try {
+      await SecureStore.setItemAsync(key, stringValue);
+    } catch (e) {
+      console.warn(`⚠️ Errore nel salvataggio SecureStore per "${key}"`, e);
+    }
   }
 }
 
@@ -23,7 +29,12 @@ export async function getToken(key) {
       return null;
     }
   } else {
-    return await SecureStore.getItemAsync(key);
+    try {
+      return await SecureStore.getItemAsync(key);
+    } catch (e) {
+      console.warn(`⚠️ Errore nel recupero SecureStore per "${key}"`, e);
+      return null;
+    }
   }
 }
 
@@ -35,6 +46,10 @@ export async function deleteToken(key) {
       console.warn('⚠️ localStorage non disponibile', e);
     }
   } else {
-    await SecureStore.deleteItemAsync(key);
+    try {
+      await SecureStore.deleteItemAsync(key);
+    } catch (e) {
+      console.warn(`⚠️ Errore nella cancellazione SecureStore per "${key}"`, e);
+    }
   }
 }

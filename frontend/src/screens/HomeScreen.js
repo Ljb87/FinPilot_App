@@ -43,7 +43,7 @@ export default function HomeScreen() {
       });
       setTopAsset(response.data);
     } catch (error) {
-      console.error('Errore nel recupero dell’asset migliore:', error);
+      //console.error('Errore nel recupero dell’asset migliore:', error);
     }
   };
 
@@ -54,7 +54,7 @@ export default function HomeScreen() {
       });
       setWorstAsset(response.data);
     } catch (error) {
-      console.error('Errore nel recupero dell’asset peggiore:', error);
+      //console.error('Errore nel recupero dell’asset peggiore:', error);
     }
   };
 

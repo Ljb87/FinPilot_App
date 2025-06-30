@@ -1,15 +1,35 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import { useRouter } from 'expo-router';
 import { AuthContext } from '../context/AuthContext';
+import api from '../services/api'; // ✅ import API
 import styles from '../styles/welcomeStyles';
 
 export default function WelcomeScreen() {
-  const { user } = useContext(AuthContext);
+  const { user, token, setUser } = useContext(AuthContext);
   const router = useRouter();
 
+  useEffect(() => {
+        const fetchUser = async () => {
+      try {
+        const response = await api.get('/auth/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log("👤 Utente ricevuto in WelcomeScreen:", response.data);
+
+        setUser(response.data);
+      } catch (error) {
+        console.warn("❗Errore nel caricamento del profilo utente in WelcomeScreen", error);
+      }
+    };
+
+
+    fetchUser();
+  }, []);
+
   const handleGoToHome = () => {
-    router.replace('/home'); // 👉 ora torna alla home
+    router.replace('/home');
   };
 
   return (

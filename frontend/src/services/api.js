@@ -5,8 +5,17 @@ import { deleteToken, getToken } from './storage';
 
 let isRedirecting = false;
 
+// 🌐 Imposta dinamicamente la baseURL in base alla piattaforma
+const LOCAL_IP = '192.168.1.64'; // 👈 Sostituisci con l’IP del tuo Mac se cambia
+const PORT = '8000';
+
+const baseURL =
+  Platform.OS === 'web'
+    ? `http://localhost:${PORT}`
+    : `http://${LOCAL_IP}:${PORT}`;
+
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
