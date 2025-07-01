@@ -1,3 +1,4 @@
+// Client Axios configurato per comunicare con il backend FastAPI
 import axios from 'axios';
 import { router } from 'expo-router';
 import { Alert, Platform } from 'react-native';

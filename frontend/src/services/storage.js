@@ -1,3 +1,4 @@
+// Wrapper per la gestione sicura dei token su web e mobile
 import * as SecureStore from 'expo-secure-store';
 
 const isWeb = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';

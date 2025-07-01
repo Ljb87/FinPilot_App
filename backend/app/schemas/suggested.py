@@ -1,3 +1,5 @@
+"""Schema Pydantic per la risposta degli asset suggeriti."""
+
 from pydantic import BaseModel
 
 class SuggestedAsset(BaseModel):

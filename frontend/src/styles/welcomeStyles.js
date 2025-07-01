@@ -1,3 +1,4 @@
+// Stili per la schermata di benvenuto
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({

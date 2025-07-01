@@ -1,3 +1,4 @@
+// Schermata di autenticazione dell'utente
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { useRouter } from 'expo-router';

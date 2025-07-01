@@ -1,3 +1,4 @@
+// Schermata di registrazione nuovo utente
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import { useRouter } from 'expo-router';

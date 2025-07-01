@@ -1,3 +1,4 @@
+// Stili per la simulazione di acquisto
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({

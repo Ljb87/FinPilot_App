@@ -1,4 +1,4 @@
-// frontend/src/components/QuantityModal.jsx
+// Modale per inserire la quantità di asset da acquistare
 import React, { useState } from 'react';
 import { Modal, View, Text, TextInput, Button, StyleSheet } from 'react-native';
 

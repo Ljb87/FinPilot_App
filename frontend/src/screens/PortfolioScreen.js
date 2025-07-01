@@ -1,3 +1,4 @@
+// Schermata che mostra il contenuto del portafoglio con funzioni di modifica
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import {
   View, Text, FlatList, ActivityIndicator, TouchableOpacity,

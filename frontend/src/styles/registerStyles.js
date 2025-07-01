@@ -1,3 +1,4 @@
+// Stili per la pagina di registrazione
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({

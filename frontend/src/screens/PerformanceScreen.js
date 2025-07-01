@@ -1,3 +1,4 @@
+// Placeholder per future analisi delle performance
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 

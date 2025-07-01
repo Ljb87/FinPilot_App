@@ -1,3 +1,4 @@
+// Modale di conferma per la vendita di un asset
 import React from 'react';
 import { Modal, View, Text, Button, StyleSheet } from 'react-native';
 

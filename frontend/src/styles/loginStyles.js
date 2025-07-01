@@ -1,3 +1,4 @@
+// Stili per la schermata di login
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({

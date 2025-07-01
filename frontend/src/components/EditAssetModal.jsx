@@ -1,4 +1,4 @@
-// components/EditAssetModal.js
+// Modale per modificare la quantità di un asset
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TextInput, Button, StyleSheet } from 'react-native';
 

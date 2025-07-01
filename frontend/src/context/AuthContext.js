@@ -1,3 +1,4 @@
+// Contesto globale per la gestione dell'autenticazione
 import React, { createContext, useState, useEffect } from 'react';
 import { View, Text } from 'react-native'; // Import di View e Text necessari per visualizzare lo stato di caricamento
 import { useRouter } from 'expo-router';

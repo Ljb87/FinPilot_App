@@ -1,9 +1,12 @@
+"""Definizione dei modelli ORM per utenti, portafogli e asset."""
+
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database import Base
 
 class User(Base):
+    """Rappresenta un utente registrato."""
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -16,6 +19,7 @@ class User(Base):
 
 
 class Portfolio(Base):
+    """Portafoglio associato a un singolo utente."""
     __tablename__ = "portfolios"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -29,6 +33,7 @@ class Portfolio(Base):
 
 
 class Asset(Base):
+    """Singolo investimento appartenente a un portafoglio."""
     __tablename__ = "assets"
 
     id = Column(Integer, primary_key=True, index=True)

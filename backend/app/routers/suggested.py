@@ -1,3 +1,5 @@
+"""Router per fornire asset suggeriti tramite analisi statistica."""
+
 from fastapi import APIRouter
 from typing import List
 import yfinance as yf

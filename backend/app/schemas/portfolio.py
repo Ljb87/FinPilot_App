@@ -1,3 +1,5 @@
+"""Schemi Pydantic per portafoglio e asset."""
+
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime

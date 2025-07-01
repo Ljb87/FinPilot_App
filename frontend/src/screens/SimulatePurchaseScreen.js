@@ -1,3 +1,4 @@
+// Consente di simulare l'acquisto di un asset selezionato
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';

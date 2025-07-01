@@ -1,3 +1,4 @@
+// Dashboard principale con riepilogo dei dati di portafoglio
 import React, { useState, useContext, useCallback } from 'react';
 import { View, Text, ActivityIndicator, ScrollView, useWindowDimensions } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';

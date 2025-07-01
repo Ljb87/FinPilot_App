@@ -1,3 +1,4 @@
+// Stili per la lista degli asset in portafoglio
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({

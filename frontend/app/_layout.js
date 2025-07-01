@@ -1,3 +1,4 @@
+// Layout principale con gestione dell'autenticazione
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { AuthProvider, AuthContext } from '../src/context/AuthContext';
 import { useContext, useEffect } from 'react';

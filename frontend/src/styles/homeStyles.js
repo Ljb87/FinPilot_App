@@ -1,4 +1,5 @@
 
+// Stili per la dashboard principale
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({

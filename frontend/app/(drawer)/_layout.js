@@ -1,3 +1,4 @@
+// Configurazione del drawer laterale
 import { Drawer } from 'expo-router/drawer';
 import CustomDrawerContent from '../../src/navigation/CustomDrawerContent';
 

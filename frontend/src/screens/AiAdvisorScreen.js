@@ -1,3 +1,4 @@
+// Consulente AI che suggerisce nuovi asset da acquistare
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,

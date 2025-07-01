@@ -1,3 +1,4 @@
+// Schermata mostrata dopo la registrazione con messaggi introduttivi
 import React, { useContext, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import { useRouter } from 'expo-router';
