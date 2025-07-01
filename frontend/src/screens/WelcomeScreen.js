@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import { useRouter } from 'expo-router';
 import { AuthContext } from '../context/AuthContext';
-import api from '../services/api'; // ✅ import API
+import api from '../services/api'; // Import del modulo API
 import styles from '../styles/welcomeStyles';
 
 export default function WelcomeScreen() {

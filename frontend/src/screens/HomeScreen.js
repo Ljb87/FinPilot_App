@@ -123,7 +123,7 @@ export default function HomeScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>📊 Dashboard Finanziaria</Text>
 
-      {/* 📭 Messaggio visibile solo se il portafoglio è vuoto */}
+      {/* Messaggio visualizzato quando il portafoglio è vuoto */}
       {portfolio.length === 0 && (
         <View style={[styles.card, { backgroundColor: '#fff3cd', borderColor: '#ffeeba' }]}>
           <Text style={{ color: '#856404', textAlign: 'center' }}>
@@ -194,13 +194,13 @@ export default function HomeScreen() {
         </>
       )}
 
-      {/* 🏆 Migliore vs Peggiore */}
+      {/* Sezione con grafici di confronto tra asset migliori e peggiori */}
       {portfolio.length > 1 ? (
         (topAsset?.history?.length > 0 || worstAsset?.history?.length > 0) && (
           <>
             <Text style={styles.sectionDivider}>🏆 Migliore vs Peggiore (7 giorni)</Text>
 
-            {/* ℹ️ Messaggio se topAsset e worstAsset coincidono */}
+            {/* Messaggio informativo se topAsset e worstAsset coincidono */}
             {topAsset?.symbol && worstAsset?.symbol && topAsset.symbol === worstAsset.symbol && (
               <View style={[styles.card, { backgroundColor: '#e3f2fd', borderColor: '#90caf9' }]}>
                 <Text style={{ color: '#0d47a1', textAlign: 'center' }}>

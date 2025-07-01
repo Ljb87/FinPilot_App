@@ -11,7 +11,7 @@ class User(Base):
     name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
 
-    # 👇 Relazione uno-a-uno con Portfolio
+    # Relazione uno-a-uno con il modello Portfolio
     portfolio = relationship("Portfolio", back_populates="user", uselist=False)
 
 
@@ -23,7 +23,7 @@ class Portfolio(Base):
     name = Column(String, default="Portafoglio principale")
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    # 👇 Relazioni
+    # Definizione delle relazioni
     user = relationship("User", back_populates="portfolio")
     assets = relationship("Asset", back_populates="portfolio", cascade="all, delete-orphan")
 
@@ -39,5 +39,5 @@ class Asset(Base):
     purchase_price = Column(Float, nullable=False)
     purchase_date = Column(DateTime, nullable=False)
 
-    # 👇 Relazione con Portfolio
+    # Relazione con il modello Portfolio
     portfolio = relationship("Portfolio", back_populates="assets")

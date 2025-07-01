@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import api from '../services/api';
-import styles from '../styles/registerStyles'; // ✅ usa stile separato
+import styles from '../styles/registerStyles'; // Utilizza un file di stile dedicato
 import { AuthContext } from '../context/AuthContext';
 
 export default function RegisterScreen() {

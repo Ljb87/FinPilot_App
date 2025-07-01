@@ -8,19 +8,19 @@ from app import models
 from app.security import verify_password, hash_password
 from pydantic import BaseModel, EmailStr
 
-# 🔐 Configurazione token
-SECRET_KEY = "supersegreto123"  # In produzione usa una ENV VAR!
+# Configurazione dei parametri del token JWT
+SECRET_KEY = "supersegreto123"  # In produzione utilizzare una variabile di ambiente
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 10080
 
-# 📦 Router FastAPI dedicato all'autenticazione
+# Router FastAPI per la gestione dell'autenticazione
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
-# 🔑 Schema per protezione via header Authorization: Bearer <token>
+# Schema HTTP Bearer per l'estrazione del token dall'header Authorization
 oauth2_scheme = HTTPBearer()
 
 
-# 🔐 Crea il token JWT
+# Funzione che genera il token JWT
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
@@ -29,7 +29,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-# 🔎 Verifica la validità del token
+# Funzione di validazione del token
 def verify_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -38,7 +38,7 @@ def verify_token(token: str):
         return None
 
 
-# 🔐 Login endpoint (genera token)
+# Endpoint di login che restituisce il token JWT
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == form_data.username).first()
@@ -56,7 +56,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     }
 
 
-# 🔐 Recupera l'utente loggato dal token
+# Utility per recuperare l'utente a partire dal token
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
@@ -81,7 +81,7 @@ def get_current_user(
     return user
 
 
-# 🆕 Endpoint per registrazione
+# Endpoint per la registrazione di un nuovo utente
 class UserCreate(BaseModel):
     email: EmailStr
     name: str
@@ -121,7 +121,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     }
 
 
-# ✅ Nuovo endpoint per ottenere il profilo dell'utente autenticato
+# Endpoint che restituisce il profilo dell'utente autenticato
 @router.get("/me")
 def get_my_profile(current_user: models.User = Depends(get_current_user)):
     return {

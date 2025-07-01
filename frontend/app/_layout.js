@@ -1,7 +1,7 @@
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { AuthProvider, AuthContext } from '../src/context/AuthContext';
 import { useContext, useEffect } from 'react';
-import { ActivityIndicator, View, Text } from 'react-native'; // 👈 aggiunto Text
+import { ActivityIndicator, View, Text } from 'react-native'; // Import di Text per evitare avvisi durante il rendering
 import Toast from 'react-native-toast-message';
 
 function ProtectedLayout() {
@@ -24,7 +24,7 @@ function ProtectedLayout() {
   }, [segments, isAuthenticated, loading]);
 
   if (loading) {
-    // ✅ Spinner + testo per evitare warning
+    // Spinner e testo mostrati durante il caricamento per evitare warning
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#4CAF50" />

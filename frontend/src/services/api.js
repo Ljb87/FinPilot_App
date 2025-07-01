@@ -5,8 +5,8 @@ import { deleteToken, getToken } from './storage';
 
 let isRedirecting = false;
 
-// 🌐 Imposta dinamicamente la baseURL in base alla piattaforma
-const LOCAL_IP = '192.168.1.64'; // 👈 Sostituisci con l’IP del tuo Mac se cambia
+// Imposta dinamicamente la baseURL in base alla piattaforma utilizzata
+const LOCAL_IP = '192.168.1.64'; // Inserire l'IP corretto della macchina di sviluppo
 const PORT = '8000';
 
 const baseURL =
@@ -21,7 +21,7 @@ const api = axios.create({
   },
 });
 
-// 🔐 Intercettore per aggiungere il token a ogni richiesta
+// Intercettore che aggiunge il token a ogni richiesta
 api.interceptors.request.use(
   async (config) => {
     const token = await getToken('token');
@@ -33,7 +33,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 🔐 Intercettore globale per gestire errori 401 (tranne /auth/login)
+// Intercettore globale per la gestione dei codici 401 (eccetto /auth/login)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -45,7 +45,7 @@ api.interceptors.response.use(
 
       await deleteToken('token');
 
-      // ✅ Mostra un messaggio all'utente solo una volta
+      // Mostra un messaggio di avviso all'utente una sola volta
       if (Platform.OS === 'web') {
         alert("Sessione scaduta. Verrai reindirizzato al login.");
       } else {
