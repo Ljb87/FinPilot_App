@@ -40,9 +40,10 @@ export default function CustomDrawerContent(props) {
 
       <DrawerItem
         label="Consulente AI"
-        onPress={() => navigation.navigate('consulente-ai')}
-     />
-
+        onPress={() =>
+          props.navigation.navigate('(tabs)', { screen: 'consulente-ai' })
+        }
+        />
 
       <DrawerItem
         label="Impostazioni"
