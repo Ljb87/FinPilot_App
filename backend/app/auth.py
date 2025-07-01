@@ -7,9 +7,15 @@ from app.database import get_db
 from app import models
 from app.security import verify_password, hash_password
 from pydantic import BaseModel, EmailStr
+import os
+from dotenv import load_dotenv
+
+
+# Caricamento variabili di ambiente da .env
+load_dotenv()
 
 # Configurazione dei parametri del token JWT
-SECRET_KEY = "supersegreto123"  # In produzione utilizzare una variabile di ambiente
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 10080
 

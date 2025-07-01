@@ -40,26 +40,31 @@ api.interceptors.response.use(
     const isLoginRequest = error.config?.url?.includes('/auth/login');
 
     if (error.response?.status === 401 && !isLoginRequest && !isRedirecting) {
-      console.warn('🔐 Token scaduto o non valido. Logout automatico.');
-      isRedirecting = true;
+  console.warn('🔐 Token scaduto o non valido. Logout automatico.');
+  isRedirecting = true;
 
-      await deleteToken('token');
+  await deleteToken('token');
 
-      // Mostra un messaggio di avviso all'utente una sola volta
-      if (Platform.OS === 'web') {
-        alert("Sessione scaduta. Verrai reindirizzato al login.");
-      } else {
-        Alert.alert("Sessione scaduta", "Per favore, accedi di nuovo.");
-      }
+  // Mostra un messaggio di avviso all'utente una sola volta
+  if (Platform.OS === 'web') {
+    alert("Sessione scaduta. Verrai reindirizzato al login.");
+  } else {
+    Alert.alert("Sessione scaduta", "Per favore, accedi di nuovo.");
+  }
 
-      if (router?.pathname !== '/login') {
-        router.replace('/login');
-      }
-
-      setTimeout(() => {
-        isRedirecting = false;
-      }, 3000);
+  setTimeout(() => {
+    if (Platform.OS === 'web') {
+      window.location.href = '/login';
+    } else {
+      router.replace('/login');
     }
+  }, 100);
+
+  setTimeout(() => {
+    isRedirecting = false;
+  }, 3000);
+}
+
 
     return Promise.reject(error);
   }

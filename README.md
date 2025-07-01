@@ -117,6 +117,14 @@ npx expo start
 - Smartphone tramite Expo Go
 
 4. Testare le funzionalità principali:
+
+> **Nota:** per testare rapidamente il comportamento dell’app con dati già presenti, è possibile accedere con l’utente:
+>
+> - **Email**: paolo@paolo.com  
+> - **Password**: paolo123
+>
+> Questo utente ha già un portafoglio simulato popolato, utile per visualizzare asset acquistati e performance nel tempo.
+
    - Registrazione
    - Schermata Welcome
    - Simulazione acquisto
