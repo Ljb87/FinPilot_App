@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["Portfolio"]
 )
 
-# 📥 GET: restituisce il portafoglio dell'utente loggato con current_price
+# Restituisce il portafoglio dell'utente autenticato includendo il prezzo corrente degli asset
 @router.get("/me", response_model=Portfolio)
 def get_my_portfolio(
     db: Session = Depends(get_db),
@@ -23,7 +23,7 @@ def get_my_portfolio(
     if not portfolio:
         raise HTTPException(status_code=404, detail="Portfolio non trovato")
 
-    # ➕ Aggiunge il campo current_price dinamicamente usando yfinance
+    # Aggiunta dinamica del campo current_price tramite yfinance
     for asset in portfolio.assets:
         try:
             ticker = yf.Ticker(asset.symbol)
@@ -37,7 +37,7 @@ def get_my_portfolio(
 
 
 
-# ➕ POST: aggiungi asset (merge se già presente)
+# Aggiunge un asset al portafoglio (effettua merge se già presente)
 @router.post("/asset", response_model=Asset)
 def add_asset(
     asset: AssetCreate,
@@ -75,7 +75,7 @@ def add_asset(
     return new_asset
 
 
-# ✏️ PUT: aggiorna asset
+# Aggiorna le informazioni di un asset
 @router.put("/asset/{asset_id}", response_model=Asset)
 def update_asset(
     asset_id: int,
@@ -122,7 +122,7 @@ def delete_asset(
 
 
 
-# 💰 GET: bilancio portafoglio
+# Calcola il bilancio complessivo del portafoglio
 @router.get("/me/balance")
 def get_portfolio_balance(
     db: Session = Depends(get_db),
@@ -140,7 +140,7 @@ def get_portfolio_balance(
         "last_updated": datetime.utcnow()
     }
 
-# 📊 GET: performance del portafoglio via yfinance
+# Restituisce la performance del portafoglio tramite yfinance
 @router.get("/me/performance")
 def get_portfolio_performance(
     db: Session = Depends(get_db),
@@ -150,7 +150,7 @@ def get_portfolio_performance(
     if not portfolio:
         raise HTTPException(status_code=404, detail="Portfolio non trovato")
     
-    # ✅ Forziamo il refresh dal DB (aggiunto)
+    # Forza il refresh dal database
     db.refresh(portfolio)
 
     result = []
@@ -188,7 +188,7 @@ def get_portfolio_performance(
     return result
 
 
-# 📈 GET: statistiche aggregate del portafoglio
+# Restituisce statistiche aggregate del portafoglio
 @router.get("/stats")
 def get_portfolio_stats(
     db: Session = Depends(get_db),
@@ -244,7 +244,7 @@ def get_portfolio_stats(
     return stats
 
 
-# 📈 GET: andamento giornaliero dell'asset migliore
+# Andamento giornaliero dell'asset con la migliore performance
 @router.get("/top-asset/history")
 def get_top_asset_history(
     db: Session = Depends(get_db),
@@ -290,7 +290,7 @@ def get_top_asset_history(
     }
 
 
-# 📉 GET: andamento giornaliero del peggior asset
+# Andamento giornaliero dell'asset con la peggiore performance
 @router.get("/worst-asset/history")
 def get_worst_asset_history(
     db: Session = Depends(get_db),
@@ -334,7 +334,7 @@ def get_worst_asset_history(
         "history": history
     }
 
-# 🚨 GET: Suggerimenti di acquisto/vendita basati sull’andamento settimanale
+# Suggerimenti di acquisto o vendita basati sull'andamento settimanale
 @router.get("/alerts")
 def get_alerts(
     db: Session = Depends(get_db),

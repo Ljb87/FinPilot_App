@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { View, Text } from 'react-native'; // ✅ aggiunto Text e View
+import { View, Text } from 'react-native'; // Import di View e Text necessari per visualizzare lo stato di caricamento
 import { useRouter } from 'expo-router';
 import { saveToken, getToken, deleteToken } from '../services/storage';
 
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
 
   const isAuthenticated = !!token;
 
-  // ✅ Mostra spinner o messaggio mentre carica
+  // Durante il caricamento viene mostrato un indicatore con messaggio
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

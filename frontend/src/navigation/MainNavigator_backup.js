@@ -4,7 +4,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import PortfolioScreen from '../screens/PortfolioScreen';
 import PerformanceScreen from '../screens/PerformanceScreen'; 
-import SuggestedAssetsScreen from '../screens/SuggestedAssetsScreen'; // ✅ Nuovo import
+import SuggestedAssetsScreen from '../screens/SuggestedAssetsScreen'; // Import della schermata per gli asset suggeriti
 import { AuthContext } from '../context/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
 
@@ -27,7 +27,7 @@ const MainNavigator = () => {
         <>
           <Stack.Screen name="Portfolio" component={PortfolioScreen} />
           <Stack.Screen name="Performance" component={PerformanceScreen} />
-          <Stack.Screen name="SuggestedAssets" component={SuggestedAssetsScreen} /> {/* ✅ Schermata aggiunta */}
+          <Stack.Screen name="SuggestedAssets" component={SuggestedAssetsScreen} /> {/* Schermata aggiuntiva per i suggerimenti */}
         </>
       ) : (
         <>

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import users
 from app.routers import portfolio
-from app.routers import suggested   # ✅ Aggiunto router suggeriti
+from app.routers import suggested   # Import del router per gli asset suggeriti
 from app.auth import router as auth_router
 from app.database import engine
 
@@ -12,7 +12,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# ✅ CORS configuration
+# Configurazione CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # In produzione: metti ["http://localhost:8081"] o dominio reale
@@ -21,13 +21,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🚀 Inclusione dei router
-app.include_router(users.router)        # 👤 Rotte utenti
-app.include_router(auth_router)         # 🔐 Rotte autenticazione
-app.include_router(portfolio.router)    # 💼 Rotte portfolio
-app.include_router(suggested.router)    # 🌟 Rotte asset suggeriti
+# Inclusione dei router applicativi
+app.include_router(users.router)        # Rotte relative agli utenti
+app.include_router(auth_router)         # Rotte di autenticazione
+app.include_router(portfolio.router)    # Rotte relative al portafoglio
+app.include_router(suggested.router)    # Rotte per gli asset suggeriti
 
-# 🌍 Rotta base
+# Rotta di default dell'applicazione
 @app.get("/")
 def read_root():
     return {"message": "Benvenuto su FinPilot!"}
