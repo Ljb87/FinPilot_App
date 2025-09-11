@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import users
 from app.routers import portfolio
-from app.routers import suggested   # Import del router per gli asset suggeriti
+from app.routers import suggested  
 from app.auth import router as auth_router
 from app.database import engine
 
